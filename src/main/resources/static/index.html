@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillBridge Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+
+        :root {
+            --bg: #f7f3eb;
+            --bg-2: #fff9ef;
+            --panel: #fffef8;
+            --line: #e8dcc5;
+            --text: #2c261d;
+            --muted: #7f735f;
+            --brand: #b5532d;
+            --brand-2: #e29341;
+            --ok: #1f8f63;
+            --danger: #b03333;
+            --shadow: 0 20px 40px rgba(120, 80, 30, 0.12);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Manrope, "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 15% 0%, rgba(226, 147, 65, 0.28), transparent 28%),
+                radial-gradient(circle at 90% 20%, rgba(181, 83, 45, 0.18), transparent 35%),
+                linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 100%);
+        }
+
+        .wrap {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 22px;
+            display: grid;
+            gap: 18px;
+        }
+
+        .hero {
+            border: 1px solid var(--line);
+            border-radius: 26px;
+            background: linear-gradient(130deg, rgba(255, 248, 232, 0.9), rgba(255, 255, 255, 0.95));
+            box-shadow: var(--shadow);
+            padding: 26px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 18px;
+            animation: fadeIn 450ms ease;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        h1 {
+            font-family: Space Grotesk, Manrope, sans-serif;
+            font-size: clamp(30px, 4vw, 48px);
+            margin: 10px 0;
+            line-height: 1.05;
+        }
+
+        .lead {
+            margin: 0;
+            color: var(--muted);
+            max-width: 65ch;
+            line-height: 1.65;
+        }
+
+        .hero-box {
+            border: 1px dashed var(--line);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 16px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .hero-box b { color: var(--brand); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 14px;
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--panel);
+            box-shadow: 0 8px 20px rgba(122, 95, 58, 0.08);
+            padding: 16px;
+            animation: fadeIn 450ms ease;
+        }
+
+        .span-4 { grid-column: span 4; }
+        .span-6 { grid-column: span 6; }
+        .span-8 { grid-column: span 8; }
+        .span-12 { grid-column: span 12; }
+
+        h2 {
+            margin: 2px 0 10px;
+            font-size: 18px;
+            font-family: Space Grotesk, Manrope, sans-serif;
+        }
+
+        .sub {
+            margin: 0 0 14px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stack { display: grid; gap: 10px; }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
+
+        input, select, textarea, button {
+            width: 100%;
+            font: inherit;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            padding: 10px 12px;
+            background: #fff;
+            color: var(--text);
+        }
+
+        textarea { min-height: 90px; resize: vertical; }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(130deg, var(--brand), var(--brand-2));
+            color: #fff;
+            font-weight: 700;
+            transition: transform 120ms ease, box-shadow 120ms ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(181, 83, 45, 0.25);
+        }
+
+        button.secondary {
+            background: #fff;
+            border: 1px solid var(--line);
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .result {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fff;
+            min-height: 90px;
+            white-space: pre-wrap;
+            color: var(--muted);
+        }
+
+        .ok { color: var(--ok); }
+        .error { color: var(--danger); }
+
+        .role-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .role-tab {
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .role-tab.active {
+            border-color: #d98556;
+            background: #fff2df;
+            color: #8a3a1f;
+        }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .pill {
+            border: 1px solid var(--line);
+            background: #fff6e8;
+            color: #8d663d;
+            border-radius: 999px;
+            font-size: 12px;
+            padding: 4px 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .hero { grid-template-columns: 1fr; }
+            .span-4, .span-6, .span-8 { grid-column: span 12; }
+        }
+
+        @media (max-width: 680px) {
+            .row, .row-3, .role-tabs { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <section class="hero">
+        <div>
+            <div class="chip">SkillBridge • Personalized Learning Network</div>
+            <h1>Learner / Creator / Admin Dashboard</h1>
+            <p class="lead">
+                Signup, complete profile setup, and drive recommendations using domain, search activity,
+                likes, and ratings. Role-based controls appear automatically after login.
+            </p>
+        </div>
+        <div class="hero-box">
+            <div><b>Domain-First Feed:</b> first login highlights trends in your selected domain.</div>
+            <div><b>Adaptive Feed:</b> later combines your search keywords + liked tags + domain.</div>
+            <div><b>Creator Trust:</b> creators must verify email before publishing content.</div>
+            <div><b>Admin Control:</b> approve/reject pending content and monitor users.</div>
+        </div>
+    </section>
+
+    <section class="grid">
+        <article class="card span-6">
+            <h2>Signup / Login</h2>
+            <p class="sub">Create account with username, email, password, and role. Login to unlock dashboard features.</p>
+            <div class="stack">
+                <div class="row-3">
+                    <div>
+                        <label for="signupUsername">Username</label>
+                        <input id="signupUsername" placeholder="srija01" />
+                    </div>
+                    <div>
+                        <label for="signupName">Full Name</label>
+                        <input id="signupName" placeholder="Srija Das" />
+                    </div>
+                    <div>
+                        <label for="signupRole">Role</label>
+                        <select id="signupRole">
+                            <option value="LEARNER">Learner</option>
+                            <option value="CREATOR">Content Creator</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                        <label for="signupEmail">Email</label>
+                        <input id="signupEmail" placeholder="srija@example.com" />
+                    </div>
+                    <div>
+                        <label for="signupPassword">Password</label>
+                        <input id="signupPassword" type="password" placeholder="Minimum 8 characters" />
+                    </div>
+                </div>
+                <div>
+                    <label for="signupBio">Bio</label>
+                    <textarea id="signupBio" placeholder="Short intro about your goals"></textarea>
+                </div>
+                <div class="row">
+                    <button onclick="signup()">Signup And Login</button>
+                    <button class="secondary" onclick="login()">Login</button>
+                </div>
+                <div class="row">
+                    <div>
+                        <label for="loginEmail">Login Email</label>
+                        <input id="loginEmail" placeholder="srija@example.com" />
+                    </div>
+                    <div>
+                        <label for="loginPassword">Login Password</label>
+                        <input id="loginPassword" type="password" placeholder="Your password" />
+                    </div>
+                </div>
+                <div class="row">
+                    <button class="secondary" onclick="logout()">Logout</button>
+                    <button class="secondary" onclick="refreshMe()">Refresh My Profile</button>
+                </div>
+                <div id="authResult" class="result">Not logged in.</div>
+            </div>
+        </article>
+
+        <article class="card span-6">
+            <h2>Mandatory Profile Setup</h2>
+            <p class="sub">After login, fill full name, domain, role, and interests to initialize recommendations.</p>
+            <div class="stack">
+                <div class="row">
+                    <div>
+                        <label for="profileFullName">Full Name</label>
+                        <input id="profileFullName" placeholder="Srija Das" />
+                    </div>
+                    <div>
+                        <label for="profileRole">Role</label>
+                        <select id="profileRole">
+                            <option value="LEARNER">Learner</option>
+                            <option value="CREATOR">Content Creator</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                        <label for="profileDomain">Domain</label>
+                        <select id="profileDomain"></select>
+                    </div>
+                    <div>
+                        <label for="profileInterests">Interests (comma separated)</label>
+                        <input id="profileInterests" placeholder="AI, Cloud, Market trends" />
+                    </div>
+                </div>
+                <div class="row">
+                    <button onclick="setupProfile()">Save Profile Setup</button>
+                    <button class="secondary" onclick="verifyEmail()">Verify Email</button>
+                </div>
+                <div class="pill-row" id="sessionPills"></div>
+                <div id="profileResult" class="result">Profile details are not loaded yet.</div>
+            </div>
+        </article>
+
+        <article class="card span-12">
+            <h2>Role Dashboard</h2>
+            <p class="sub">Switch panels manually, or let the app auto-highlight your logged-in role.</p>
+            <div class="role-tabs">
+                <div id="tabLearner" class="role-tab active" onclick="showPanel('learner')">Learner</div>
+                <div id="tabCreator" class="role-tab" onclick="showPanel('creator')">Creator</div>
+                <div id="tabAdmin" class="role-tab" onclick="showPanel('admin')">Admin</div>
+            </div>
+
+            <div id="panelLearner" class="panel active">
+                <div class="grid">
+                    <div class="card span-6">
+                        <h2>Learner Feed</h2>
+                        <p class="sub">Domain-first and personalized trending feed.</p>
+                        <div class="stack">
+                            <button onclick="loadFeed()">Load Personalized Home Feed</button>
+                            <div class="row">
+                                <div>
+                                    <label for="searchKeyword">Search Keyword</label>
+                                    <input id="searchKeyword" placeholder="AI tools" />
+                                </div>
+                                <div>
+                                    <label>&nbsp;</label>
+                                    <button class="secondary" onclick="searchContent()">Search Content</button>
+                                </div>
+                            </div>
+                            <div id="feedResult" class="result">Feed results will appear here.</div>
+                        </div>
+                    </div>
+
+                    <div class="card span-6">
+                        <h2>Interact With Content</h2>
+                        <p class="sub">Like/dislike, bookmark, and feedback (rating + comment).</p>
+                        <div class="stack">
+                            <div class="row-3">
+                                <div>
+                                    <label for="interactionContentId">Content ID</label>
+                                    <input id="interactionContentId" placeholder="12" />
+                                </div>
+                                <div>
+                                    <label for="reactionType">Reaction</label>
+                                    <select id="reactionType">
+                                        <option value="LIKE">Like</option>
+                                        <option value="DISLIKE">Dislike</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="feedbackRating">Rating (1-5)</label>
+                                    <input id="feedbackRating" type="number" min="1" max="5" value="5" />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="feedbackComment">Feedback Comment</label>
+                                <textarea id="feedbackComment" placeholder="This helped me understand AI pipelines clearly."></textarea>
+                            </div>
+                            <div class="row-3">
+                                <button onclick="reactContent()">React</button>
+                                <button onclick="bookmarkContent()">Bookmark</button>
+                                <button class="secondary" onclick="removeBookmark()">Remove Bookmark</button>
+                            </div>
+                            <div class="row">
+                                <button class="secondary" onclick="submitFeedback()">Submit Feedback</button>
+                                <button class="secondary" onclick="loadBookmarks()">Load Bookmarks</button>
+                            </div>
+                            <div id="learnerResult" class="result">Learner actions output will appear here.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panelCreator" class="panel">
+                <div class="grid">
+                    <div class="card span-8">
+                        <h2>Creator Content Studio</h2>
+                        <p class="sub">Upload, update, and delete your content. Email verification is required for creators.</p>
+                        <div class="stack">
+                            <div class="row">
+                                <div>
+                                    <label for="contentTitle">Title</label>
+                                    <input id="contentTitle" placeholder="Getting Started with Cloud Computing" />
+                                </div>
+                                <div>
+                                    <label for="contentDomain">Domain</label>
+                                    <select id="contentDomain">
+                                        <option value="SOFTWARE DEVELOPMENT">Software Development</option>
+                                        <option value="DATA SCIENCE">Data Science</option>
+                                        <option value="AGRICULTURE">Agriculture</option>
+                                        <option value="UI/UX">UI/UX</option>
+                                        <option value="DEVOPS">DevOps</option>
+                                        <option value="BLOCKCHAIN">Blockchain</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="contentDescription">Description</label>
+                                <textarea id="contentDescription" placeholder="Explain your content in detail"></textarea>
+                            </div>
+                            <div class="row-3">
+                                <div>
+                                    <label for="contentTags">Tags (comma separated)</label>
+                                    <input id="contentTags" placeholder="#Cloud,#Beginner,#DevOps" />
+                                </div>
+                                <div>
+                                    <label for="contentLink">Resource Link</label>
+                                    <input id="contentLink" placeholder="https://example.com/resource" />
+                                </div>
+                                <div>
+                                    <label for="contentFile">File Path / Name</label>
+                                    <input id="contentFile" placeholder="cloud-guide.pdf" />
+                                </div>
+                            </div>
+                            <div class="row-3">
+                                <div>
+                                    <label for="creatorContentId">Content ID (for update/delete)</label>
+                                    <input id="creatorContentId" placeholder="12" />
+                                </div>
+                                <div>
+                                    <label>&nbsp;</label>
+                                    <button onclick="createContent()">Upload Content</button>
+                                </div>
+                                <div>
+                                    <label>&nbsp;</label>
+                                    <button class="secondary" onclick="updateContent()">Update Content</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <button class="secondary" onclick="deleteContent()">Delete Content</button>
+                                <button class="secondary" onclick="loadMyContent()">Load My Content</button>
+                            </div>
+                            <div id="creatorResult" class="result">Creator actions output will appear here.</div>
+                        </div>
+                    </div>
+
+                    <div class="card span-4">
+                        <h2>Creator Tips</h2>
+                        <div class="stack">
+                            <div class="pill">Verify email before upload</div>
+                            <div class="pill">Use clear domain tagging</div>
+                            <div class="pill">Add #tags for discovery</div>
+                            <div class="pill">Watch likes and ratings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="panelAdmin" class="panel">
+                <div class="grid">
+                    <div class="card span-6">
+                        <h2>Admin Moderation</h2>
+                        <p class="sub">Approve/reject pending content.</p>
+                        <div class="stack">
+                            <button onclick="loadPendingContent()">Load Pending Content</button>
+                            <div class="row">
+                                <div>
+                                    <label for="adminContentId">Content ID</label>
+                                    <input id="adminContentId" placeholder="12" />
+                                </div>
+                                <div>
+                                    <label>&nbsp;</label>
+                                    <button onclick="approveContent()">Approve</button>
+                                </div>
+                            </div>
+                            <button class="secondary" onclick="rejectContent()">Reject/Delete Content</button>
+                            <div id="adminModerationResult" class="result">Moderation output will appear here.</div>
+                        </div>
+                    </div>
+
+                    <div class="card span-6">
+                        <h2>Admin User Management</h2>
+                        <p class="sub">Monitor users and role distribution.</p>
+                        <div class="stack">
+                            <button onclick="loadUsers()">Load Users</button>
+                            <div id="adminUsersResult" class="result">User list output will appear here.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>
+
+<script>
+    const authState = {
+        token: localStorage.getItem('skillbridge.jwt') || '',
+        email: localStorage.getItem('skillbridge.email') || '',
+        userId: Number(localStorage.getItem('skillbridge.userId') || 0),
+        role: localStorage.getItem('skillbridge.role') || ''
+    };
+
+    const api = {
+        async request(url, options = {}) {
+            const headers = options.headers ? { ...options.headers } : {};
+            if (options.body !== undefined) {
+                headers['Content-Type'] = 'application/json';
+            }
+            if (authState.token) {
+                headers.Authorization = `Bearer ${authState.token}`;
+            }
+
+            const response = await fetch(url, {
+                ...options,
+                headers,
+                body: options.body === undefined ? undefined : JSON.stringify(options.body)
+            });
+
+            const text = await response.text();
+            let data;
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch {
+                data = { raw: text };
+            }
+
+            if (!response.ok) {
+                throw new Error(data.error || data.message || response.statusText);
+            }
+            return data;
+        },
+        get(url) {
+            return api.request(url, { method: 'GET' });
+        },
+        post(url, body) {
+            return api.request(url, { method: 'POST', body });
+        },
+        put(url, body) {
+            return api.request(url, { method: 'PUT', body });
+        },
+        delete(url) {
+            return api.request(url, { method: 'DELETE' });
+        }
+    };
+
+    function splitCsv(value) {
+        return value.split(',').map(part => part.trim()).filter(Boolean);
+    }
+
+    function setResult(id, message, ok = true) {
+        const el = document.getElementById(id);
+        el.classList.toggle('ok', ok);
+        el.classList.toggle('error', !ok);
+        el.textContent = message;
+    }
+
+    function renderList(id, items, formatter) {
+        if (!items || !items.length) {
+            setResult(id, 'No data found.', true);
+            return;
+        }
+        setResult(id, items.map(formatter).join('\n\n'), true);
+    }
+
+    function saveAuth(auth) {
+        authState.token = auth.token || '';
+        authState.email = auth.email || '';
+        authState.userId = Number(auth.userId || 0);
+        authState.role = auth.role || '';
+
+        localStorage.setItem('skillbridge.jwt', authState.token);
+        localStorage.setItem('skillbridge.email', authState.email);
+        localStorage.setItem('skillbridge.userId', String(authState.userId));
+        localStorage.setItem('skillbridge.role', authState.role);
+
+        renderSession();
+        activateRolePanel(authState.role);
+    }
+
+    function clearAuth() {
+        authState.token = '';
+        authState.email = '';
+        authState.userId = 0;
+        authState.role = '';
+
+        localStorage.removeItem('skillbridge.jwt');
+        localStorage.removeItem('skillbridge.email');
+        localStorage.removeItem('skillbridge.userId');
+        localStorage.removeItem('skillbridge.role');
+
+        renderSession();
+    }
+
+    function renderSession(profile) {
+        const pills = [];
+        if (authState.email) {
+            pills.push(`Email: ${authState.email}`);
+        }
+        if (authState.role) {
+            pills.push(`Role: ${authState.role}`);
+        }
+        if (profile && profile.domain) {
+            pills.push(`Domain: ${profile.domain}`);
+        }
+        if (profile && profile.verified) {
+            pills.push('Email: Verified');
+        }
+
+        document.getElementById('sessionPills').innerHTML = pills.map(item => `<span class="pill">${item}</span>`).join('');
+        setResult('authResult', authState.token ? `Logged in as ${authState.email} (#${authState.userId})` : 'Not logged in.', !!authState.token);
+    }
+
+    function showPanel(panel) {
+        const panels = ['learner', 'creator', 'admin'];
+        panels.forEach(name => {
+            document.getElementById(`panel${capitalize(name)}`).classList.toggle('active', name === panel);
+            document.getElementById(`tab${capitalize(name)}`).classList.toggle('active', name === panel);
+        });
+    }
+
+    function activateRolePanel(role) {
+        const normalized = (role || '').toUpperCase();
+        if (normalized === 'CREATOR') {
+            showPanel('creator');
+            return;
+        }
+        if (normalized === 'ADMIN') {
+            showPanel('admin');
+            return;
+        }
+        showPanel('learner');
+    }
+
+    function capitalize(value) {
+        return value.substring(0, 1).toUpperCase() + value.substring(1);
+    }
+
+    async function loadDomains() {
+        try {
+            const domains = await api.get('/profile/domains');
+            const select = document.getElementById('profileDomain');
+            select.innerHTML = domains.map(domain => `<option value="${domain}">${domain}</option>`).join('');
+        } catch (error) {
+            setResult('profileResult', error.message, false);
+        }
+    }
+
+    async function signup() {
+        try {
+            const payload = {
+                username: document.getElementById('signupUsername').value,
+                name: document.getElementById('signupName').value,
+                email: document.getElementById('signupEmail').value,
+                password: document.getElementById('signupPassword').value,
+                role: document.getElementById('signupRole').value,
+                bio: document.getElementById('signupBio').value,
+                teachSkills: [],
+                learnSkills: []
+            };
+            const auth = await api.post('/auth/register', payload);
+            saveAuth(auth);
+            setResult('authResult', `Signup successful for ${auth.email}.`, true);
+            document.getElementById('loginEmail').value = auth.email;
+            document.getElementById('profileFullName').value = payload.name;
+            document.getElementById('profileRole').value = auth.role;
+        } catch (error) {
+            setResult('authResult', error.message, false);
+        }
+    }
+
+    async function login() {
+        try {
+            const payload = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+            const auth = await api.post('/auth/login', payload);
+            saveAuth(auth);
+            setResult('authResult', `Login successful for ${auth.email}.`, true);
+            await refreshMe();
+        } catch (error) {
+            setResult('authResult', error.message, false);
+        }
+    }
+
+    function logout() {
+        clearAuth();
+    }
+
+    async function refreshMe() {
+        try {
+            const me = await api.get('/profile/me');
+            renderSession(me);
+            if (me.role) {
+                authState.role = me.role;
+                localStorage.setItem('skillbridge.role', me.role);
+                activateRolePanel(me.role);
+                document.getElementById('profileRole').value = me.role;
+            }
+            if (me.name) {
+                document.getElementById('profileFullName').value = me.name;
+            }
+            if (me.domain) {
+                document.getElementById('profileDomain').value = me.domain;
+            }
+            setResult('profileResult', `Profile loaded for ${me.username}. Completed: ${me.profileCompleted}`, true);
+        } catch (error) {
+            setResult('profileResult', error.message, false);
+        }
+    }
+
+    async function setupProfile() {
+        try {
+            const payload = {
+                fullName: document.getElementById('profileFullName').value,
+                domain: document.getElementById('profileDomain').value,
+                role: document.getElementById('profileRole').value,
+                interests: splitCsv(document.getElementById('profileInterests').value)
+            };
+            const profile = await api.put('/profile/setup', payload);
+            authState.role = profile.role;
+            localStorage.setItem('skillbridge.role', profile.role);
+            activateRolePanel(profile.role);
+            renderSession(profile);
+            setResult('profileResult', `Profile setup saved: ${profile.name} | ${profile.domain} | ${profile.role}`, true);
+        } catch (error) {
+            setResult('profileResult', error.message, false);
+        }
+    }
+
+    async function verifyEmail() {
+        try {
+            const profile = await api.post('/profile/verify-email', {});
+            renderSession(profile);
+            setResult('profileResult', `Email verified: ${profile.verified}`, true);
+        } catch (error) {
+            setResult('profileResult', error.message, false);
+        }
+    }
+
+    async function loadFeed() {
+        try {
+            const items = await api.get('/home/feed');
+            renderList('feedResult', items, item => `#${item.id} ${item.title}\n${item.domain} | likes:${item.likes} dislikes:${item.dislikes} rating:${Number(item.averageRating).toFixed(1)}\nTags: ${(item.tags || []).join(', ')}`);
+        } catch (error) {
+            setResult('feedResult', error.message, false);
+        }
+    }
+
+    async function searchContent() {
+        try {
+            const keyword = document.getElementById('searchKeyword').value;
+            const items = await api.get(`/content/search?keyword=${encodeURIComponent(keyword)}`);
+            renderList('feedResult', items, item => `#${item.id} ${item.title}\n${item.domain}\n${item.description}`);
+        } catch (error) {
+            setResult('feedResult', error.message, false);
+        }
+    }
+
+    function contentIdFromInput(id) {
+        return Number(document.getElementById(id).value);
+    }
+
+    async function reactContent() {
+        try {
+            const contentId = contentIdFromInput('interactionContentId');
+            const type = document.getElementById('reactionType').value;
+            const result = await api.post(`/content/${contentId}/reaction`, { type });
+            setResult('learnerResult', `Reaction saved for #${result.id}. Likes:${result.likes} Dislikes:${result.dislikes}`, true);
+        } catch (error) {
+            setResult('learnerResult', error.message, false);
+        }
+    }
+
+    async function bookmarkContent() {
+        try {
+            const contentId = contentIdFromInput('interactionContentId');
+            await api.post(`/content/${contentId}/bookmark`, {});
+            setResult('learnerResult', `Content #${contentId} bookmarked.`, true);
+        } catch (error) {
+            setResult('learnerResult', error.message, false);
+        }
+    }
+
+    async function removeBookmark() {
+        try {
+            const contentId = contentIdFromInput('interactionContentId');
+            await api.delete(`/content/${contentId}/bookmark`);
+            setResult('learnerResult', `Bookmark removed for #${contentId}.`, true);
+        } catch (error) {
+            setResult('learnerResult', error.message, false);
+        }
+    }
+
+    async function submitFeedback() {
+        try {
+            const contentId = contentIdFromInput('interactionContentId');
+            const payload = {
+                rating: Number(document.getElementById('feedbackRating').value),
+                comment: document.getElementById('feedbackComment').value
+            };
+            const result = await api.post(`/content/${contentId}/feedback`, payload);
+            setResult('learnerResult', `Feedback submitted for #${result.id}. New avg rating: ${Number(result.averageRating).toFixed(1)}`, true);
+        } catch (error) {
+            setResult('learnerResult', error.message, false);
+        }
+    }
+
+    async function loadBookmarks() {
+        try {
+            const items = await api.get('/content/bookmarks');
+            renderList('learnerResult', items, item => `#${item.id} ${item.title}\n${item.domain} | rating:${Number(item.averageRating).toFixed(1)}`);
+        } catch (error) {
+            setResult('learnerResult', error.message, false);
+        }
+    }
+
+    function contentPayload() {
+        return {
+            title: document.getElementById('contentTitle').value,
+            description: document.getElementById('contentDescription').value,
+            domain: document.getElementById('contentDomain').value,
+            tags: splitCsv(document.getElementById('contentTags').value),
+            resourceLink: document.getElementById('contentLink').value,
+            resourceFile: document.getElementById('contentFile').value
+        };
+    }
+
+    async function createContent() {
+        try {
+            const result = await api.post('/content', contentPayload());
+            setResult('creatorResult', `Uploaded content #${result.id}. Verified: ${result.verified}`, true);
+        } catch (error) {
+            setResult('creatorResult', error.message, false);
+        }
+    }
+
+    async function updateContent() {
+        try {
+            const contentId = contentIdFromInput('creatorContentId');
+            const result = await api.put(`/content/${contentId}`, contentPayload());
+            setResult('creatorResult', `Updated content #${result.id}. Verified: ${result.verified}`, true);
+        } catch (error) {
+            setResult('creatorResult', error.message, false);
+        }
+    }
+
+    async function deleteContent() {
+        try {
+            const contentId = contentIdFromInput('creatorContentId');
+            await api.delete(`/content/${contentId}`);
+            setResult('creatorResult', `Deleted content #${contentId}.`, true);
+        } catch (error) {
+            setResult('creatorResult', error.message, false);
+        }
+    }
+
+    async function loadMyContent() {
+        try {
+            const items = await api.get('/content/mine');
+            renderList('creatorResult', items, item => `#${item.id} ${item.title}\nVerified:${item.verified} | Views:${item.views} | Likes:${item.likes} | Rating:${Number(item.averageRating).toFixed(1)}`);
+        } catch (error) {
+            setResult('creatorResult', error.message, false);
+        }
+    }
+
+    async function loadPendingContent() {
+        try {
+            const items = await api.get('/admin/content/pending');
+            renderList('adminModerationResult', items, item => `#${item.id} ${item.title}\nDomain:${item.domain} | Uploaded by:${item.uploadedBy}`);
+        } catch (error) {
+            setResult('adminModerationResult', error.message, false);
+        }
+    }
+
+    async function approveContent() {
+        try {
+            const id = contentIdFromInput('adminContentId');
+            const result = await api.post(`/admin/content/${id}/approve`, {});
+            setResult('adminModerationResult', `Approved content #${result.id}.`, true);
+        } catch (error) {
+            setResult('adminModerationResult', error.message, false);
+        }
+    }
+
+    async function rejectContent() {
+        try {
+            const id = contentIdFromInput('adminContentId');
+            await api.delete(`/admin/content/${id}/reject`);
+            setResult('adminModerationResult', `Rejected and removed content #${id}.`, true);
+        } catch (error) {
+            setResult('adminModerationResult', error.message, false);
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const users = await api.get('/admin/users');
+            renderList('adminUsersResult', users, user => `${user.username} (${user.email})\nRole:${user.role} | Domain:${user.domain || 'N/A'} | Verified:${user.verified}`);
+        } catch (error) {
+            setResult('adminUsersResult', error.message, false);
+        }
+    }
+
+    loadDomains();
+    renderSession();
+    if (authState.role) {
+        activateRolePanel(authState.role);
+    }
+</script>
+</body>
+</html>

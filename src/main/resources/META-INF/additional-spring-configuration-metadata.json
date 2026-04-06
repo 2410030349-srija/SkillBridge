@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "app.security.admin-key",
+      "type": "java.lang.String",
+      "description": "Admin key required in X-Admin-Key header for admin endpoints."
+    },
+    {
+      "name": "app.security.rate-limit.general-per-minute",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of general API requests per client per minute."
+    },
+    {
+      "name": "app.security.rate-limit.sensitive-per-minute",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of sensitive API requests per client per minute."
+    },
+    {
+      "name": "app.security.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key used to sign JWT access tokens."
+    },
+    {
+      "name": "app.security.jwt.expiration-ms",
+      "type": "java.lang.Long",
+      "description": "JWT access token expiration in milliseconds."
+    }
+  ]
+}
