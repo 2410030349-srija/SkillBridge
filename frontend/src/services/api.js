@@ -1,6 +1,8 @@
 import { clearSession, getToken } from './auth'
 
-const API_BASE = 'http://localhost:8082'
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8082')
 
 async function request(path, options = {}) {
   const token = getToken()
