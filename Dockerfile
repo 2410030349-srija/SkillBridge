@@ -14,7 +14,7 @@ WORKDIR /app
 COPY pom.xml mvnw mvnw.cmd ./
 COPY .mvn .mvn
 COPY src src
-COPY frontend/dist src/main/resources/static
+COPY --from=frontend-build /app/frontend/dist src/main/resources/static
 RUN chmod +x mvnw && ./mvnw clean package -DskipTests
 
 # Runtime image
