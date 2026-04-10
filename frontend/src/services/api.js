@@ -38,6 +38,10 @@ async function request(path, options = {}) {
 
   if (!response.ok) {
     if (response.status === 401) {
+      const isAuthRequest = path.startsWith('/auth/login') || path.startsWith('/auth/register')
+      if (isAuthRequest) {
+        throw new Error(data.error || data.message || 'Invalid email or password.')
+      }
       clearSession()
       if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.assign('/login')
